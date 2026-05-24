@@ -1,32 +1,45 @@
 /*
- * Estilos globales y design tokens.
+ * Identidad visual.
  *
- * Sin frameworks de UI: paleta, escala y utilidades reusables (.btn,
- * .badge, .skeleton, .state) viven aca para que los componentes solo
- * carguen estilos propios del feature y respeten el budget de Angular.
+ * Estetica editorial / "boutique studio": fondo bone calido, tinta casi
+ * negra, acento terracota, serif Fraunces para titulares. Utilidades
+ * reusables (.btn, .badge, .capacity, .skeleton, .state) viven aca para
+ * cumplir el budget de anyComponentStyle de Angular y garantizar
+ * consistencia entre vistas.
+ *
+ * Sin librerias UI: todo HTML + SCSS puro.
  */
 
 :root {
-  /* Paleta — slate + acento ámbar */
-  --color-bg: #0b1020;
-  --color-surface: #121a33;
-  --color-surface-2: #1a2447;
-  --color-border: #283357;
-  --color-text: #e6ebf5;
-  --color-text-muted: #9aa4bf;
-  --color-accent: #f59e0b;
-  --color-accent-hover: #fbbf24;
-  --color-success: #10b981;
-  --color-danger: #ef4444;
+  /* Paleta — bone + tinta + terracota */
+  --color-bg: #f4eee2;
+  --color-paper: #fbf8f1;
+  --color-paper-2: #efe7d6;
+  --color-ink: #1c1815;
+  --color-ink-soft: #2c2620;
+  --color-muted: #6c6357;
+  --color-rule: #d6cdb8;
+  --color-rule-soft: #e6ddc7;
+  --color-accent: #b3411a;
+  --color-accent-hover: #923414;
+  --color-accent-soft: #f2dbcb;
+  --color-success: #2d6a4f;
+  --color-danger: #9b2226;
 
-  /* Tipografía */
+  /* Tipografia */
+  --font-serif: 'Fraunces', 'Iowan Old Style', 'Times New Roman', serif;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Menlo', monospace;
+
+  --font-size-2xs: 0.6875rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: 2rem;
+  --font-size-3xl: 2.75rem;
+  --font-size-display: 3.75rem;
 
   /* Spacing scale (4px base) */
   --space-1: 0.25rem;
@@ -36,16 +49,16 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-8: 3rem;
+  --space-10: 4rem;
 
-  /* Radii & shadows */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  /* Radii y sombras — radii minimalistas (mas editorial que floating cards) */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --shadow-sm: 0 1px 0 rgba(28, 24, 21, 0.06);
+  --shadow-md: 0 12px 32px -16px rgba(28, 24, 21, 0.18);
 
-  /* Layout */
-  --max-width: 1100px;
+  --max-width: 1180px;
 }
 
 *,
@@ -63,12 +76,13 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
-  line-height: 1.5;
-  color: var(--color-text);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(245, 158, 11, 0.08), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(99, 102, 241, 0.1), transparent 55%),
-    var(--color-bg);
+  line-height: 1.55;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  /* Textura sutil: un degrade casi imperceptible para evitar el flat absoluto */
+  background-image:
+    radial-gradient(1100px 600px at 90% -10%, rgba(179, 65, 26, 0.05), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(108, 99, 87, 0.05), transparent 55%);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -84,18 +98,29 @@ a {
   text-decoration: none;
 }
 
+/* Tipografia ayuda — usadas en eyebrows y labels */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-2xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.serif {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
 /* Focus visible accesible */
 :focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  outline-offset: 3px;
+  border-radius: 1px;
 }
 
-/*
- * Respeto a la preferencia del usuario: si declara reduced-motion,
- * desactivamos animaciones, transiciones y el shimmer de los skeletons.
- * Es un requisito de accesibilidad (WCAG 2.3.3) habitualmente olvidado.
- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -108,127 +133,181 @@ a {
 }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.35);
-  color: #fff;
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
 }
 
 /* =========================================================
- * Utilidades globales reutilizadas por list y detail.
- * Vivian dentro de cada componente; se hoistean aca para
- * (a) mantener consistencia visual y (b) cumplir el budget
- * de anyComponentStyle (4 KB) que Angular aplica en prod.
+ * Utilidades globales
  * ========================================================= */
 
 /* Buttons */
 .btn {
-  font-family: inherit;
-  font-size: var(--font-size-base);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
   font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease,
-    opacity 160ms ease;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease,
+    transform 120ms ease, opacity 160ms ease;
 }
 .btn:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .btn--primary {
-  background: var(--color-accent);
-  color: #1f2937;
+  background: var(--color-ink);
+  color: var(--color-paper);
 }
 .btn--primary:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+  background: var(--color-accent);
 }
 .btn--ghost {
   background: transparent;
-  color: var(--color-accent);
-  border-color: var(--color-border);
+  color: var(--color-ink);
+  border-color: var(--color-ink);
 }
-.btn--ghost:hover {
-  border-color: var(--color-accent);
-  background: rgba(245, 158, 11, 0.08);
+.btn--ghost:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn--link {
+  background: transparent;
+  border: none;
+  padding: var(--space-2) 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+.btn--link:hover {
+  color: var(--color-ink);
+}
+.btn--lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
 }
 
 /* Badges de intensidad */
 .badge {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-2xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-ink);
+  border-radius: 0;
+  color: var(--color-ink);
+}
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
   border-radius: 999px;
-  border: 1px solid currentColor;
+  background: currentColor;
 }
-.badge--baja {
-  color: #34d399;
+.badge--baja::before {
+  background: var(--color-success);
 }
-.badge--media {
-  color: var(--color-accent);
+.badge--media::before {
+  background: var(--color-accent);
 }
-.badge--alta {
-  color: #f87171;
+.badge--alta::before {
+  background: var(--color-danger);
 }
 
-/* Estados (error / empty) */
+/* Barra de capacidad: simple progress bar editorial */
+.capacity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted);
+}
+.capacity__bar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  background: var(--color-rule);
+  overflow: hidden;
+}
+.capacity__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: var(--pct, 0%);
+  background: var(--color-ink);
+  transition: width 280ms ease;
+}
+.capacity__label {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* Estados */
 .state {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-8) var(--space-5);
-  background: var(--color-surface);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-lg);
-}
-.state__icon {
-  font-size: 2.5rem;
+  padding: var(--space-10) var(--space-5);
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-ink);
+  border-bottom: 1px solid var(--color-ink);
 }
 .state__title {
   margin: 0;
-  font-size: var(--font-size-xl);
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: var(--font-size-2xl);
+  letter-spacing: -0.015em;
 }
 .state__message {
   margin: 0;
-  color: var(--color-text-muted);
-  max-width: 36ch;
+  color: var(--color-muted);
+  max-width: 52ch;
 }
 .state--error {
-  border-color: rgba(239, 68, 68, 0.4);
+  border-color: var(--color-danger);
 }
 
 /* Skeleton placeholders */
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.04) 100%
+    var(--color-rule-soft) 0%,
+    var(--color-rule) 50%,
+    var(--color-rule-soft) 100%
   );
   background-size: 200% 100%;
-  border-radius: var(--radius-sm);
   animation: shimmer 1.4s linear infinite;
-  height: 1rem;
+  height: 0.875rem;
 }
 .skeleton--title {
-  width: 60%;
-  height: 1.25rem;
+  width: 50%;
+  height: 1.5rem;
 }
 .skeleton--line {
-  width: 90%;
+  width: 85%;
 }
 .skeleton--short {
-  width: 50%;
+  width: 40%;
 }
 .skeleton--btn {
   width: 8rem;
   height: 2.5rem;
-  border-radius: var(--radius-md);
   margin-top: var(--space-2);
 }
 @keyframes shimmer {
@@ -243,6 +322,10 @@ a {
 /* Helpers semanticos */
 .text-danger {
   color: var(--color-danger);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
 }
 
 .visually-hidden {

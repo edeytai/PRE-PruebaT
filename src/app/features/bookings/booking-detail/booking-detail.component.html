@@ -1,25 +1,26 @@
 <section class="detail" aria-labelledby="detail-title">
-  <button type="button" class="detail__back" (click)="goBack()">
-    <span aria-hidden="true">&larr;</span> Volver
+  <button type="button" class="btn btn--link detail__back" (click)="goBack()">
+    <span aria-hidden="true">&larr;</span> Volver a cartelera
   </button>
 
   @switch (view().status) {
     @case ('loading') {
       <article class="panel panel--skeleton" aria-busy="true">
+        <div class="skeleton skeleton--short"></div>
         <div class="skeleton skeleton--title"></div>
         <div class="skeleton skeleton--line"></div>
         <div class="skeleton skeleton--line"></div>
-        <div class="skeleton skeleton--line skeleton--short"></div>
         <div class="skeleton skeleton--btn"></div>
       </article>
     }
 
     @case ('error') {
       <div class="state state--error" role="alert">
+        <span class="eyebrow">Error</span>
         <h2 class="state__title">No pudimos cargar la clase</h2>
         <p class="state__message">{{ asError(view()).message }}</p>
         <button type="button" class="btn btn--primary" (click)="goBack()">
-          Volver al listado
+          Volver
         </button>
       </div>
     }
@@ -28,10 +29,14 @@
       @if (booking(); as b) {
         <article class="panel">
           <header class="panel__head">
-            <span class="panel__eyebrow">
-              Clase nro. {{ b.id.toString().padStart(2, '0') }}
-            </span>
-            <h2 id="detail-title" class="panel__title">{{ b.className }}</h2>
+            <div class="panel__heading">
+              <span class="eyebrow">
+                Clase Nro. {{ b.id.toString().padStart(2, '0') }}
+              </span>
+              <h2 id="detail-title" class="panel__title serif">
+                {{ b.className }}
+              </h2>
+            </div>
             @if (b.intensity) {
               <span class="badge badge--{{ b.intensity }}">
                 Intensidad {{ b.intensity }}
@@ -39,8 +44,10 @@
             }
           </header>
 
+          <hr class="panel__rule" />
+
           @if (b.description) {
-            <p class="panel__description">{{ b.description }}</p>
+            <p class="panel__description serif">{{ b.description }}</p>
           }
 
           <dl class="panel__meta">
@@ -54,19 +61,19 @@
             </div>
             @if (b.durationMinutes) {
               <div>
-                <dt>Duración</dt>
+                <dt>Duracion</dt>
                 <dd>{{ b.durationMinutes }} min</dd>
               </div>
             }
             <div>
-              <dt>Disponibles</dt>
+              <dt>Cupos libres</dt>
               <dd [class.text-danger]="b.availableSpots === 0">
-                {{ b.availableSpots }} cupos
+                {{ b.availableSpots }}
               </dd>
             </div>
           </dl>
 
-          <div class="capacity" aria-hidden="true">
+          <div class="capacity panel__capacity">
             <div
               class="capacity__bar"
               [style.--pct]="occupancyPct() + '%'"
@@ -74,12 +81,14 @@
               [attr.aria-valuenow]="occupancyPct()"
               aria-valuemin="0"
               aria-valuemax="100"
-              aria-label="Ocupación de la clase"
+              aria-label="Ocupacion de la clase"
             ></div>
             <span class="capacity__label">
               {{ occupancyPct() }}% ocupado
             </span>
           </div>
+
+          <hr class="panel__rule" />
 
           <form
             class="form"
@@ -89,10 +98,13 @@
             aria-label="Formulario de reserva"
           >
             <header class="form__head">
-              <h3 class="form__title">Reservar cupos</h3>
+              <span class="eyebrow">Reservar</span>
+              <h3 class="form__title serif">
+                Un nombre por cupo
+              </h3>
               <p class="form__hint">
-                Cargá el nombre de cada asistente. Usá los botones para sumar o
-                quitar cupos.
+                Ingresa el nombre de cada asistente. Agrega o quita filas según
+                cuántos cupos necesites.
               </p>
             </header>
 
@@ -100,7 +112,10 @@
               @for (ctrl of attendees.controls; track ctrl; let i = $index) {
                 <div class="attendee">
                   <label class="attendee__label" [for]="'attendee-' + i">
-                    Asistente {{ (i + 1).toString().padStart(2, '0') }}
+                    <span class="text-mono">
+                      {{ (i + 1).toString().padStart(2, '0') }}
+                    </span>
+                    Asistente
                   </label>
                   <input
                     [id]="'attendee-' + i"
@@ -116,7 +131,7 @@
                     [disabled]="!canRemoveAttendee()"
                     [attr.aria-label]="'Quitar asistente ' + (i + 1)"
                   >
-                    &minus;
+                    &times;
                   </button>
                   @if (
                     asAttendeeControl(ctrl).touched &&
@@ -126,7 +141,7 @@
                       @if (asAttendeeControl(ctrl).errors?.['required']) {
                         Falta el nombre.
                       } @else if (asAttendeeControl(ctrl).errors?.['minlength']) {
-                        Mínimo 3 caracteres.
+                        Minimo 3 caracteres.
                       }
                     </p>
                   }
@@ -143,8 +158,8 @@
               >
                 + Sumar cupo
               </button>
-              <span class="attendees__count">
-                {{ requestedSpots() }} de {{ b.availableSpots }} disponibles
+              <span class="attendees__count text-mono">
+                {{ requestedSpots() }} / {{ b.availableSpots }}
               </span>
             </div>
 
@@ -157,7 +172,7 @@
                 @if (submit().status === 'submitting') {
                   Reservando&hellip;
                 } @else {
-                  Reservar
+                  Confirmar reserva
                 }
               </button>
             </div>

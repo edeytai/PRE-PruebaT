@@ -189,7 +189,7 @@ export class BookingDetailComponent implements OnInit {
             message:
               err?.status === 409
                 ? 'No hay cupos suficientes para esa cantidad.'
-                : 'No pudimos completar la reserva. Intentalo nuevamente.',
+                : 'No pudimos completar la reserva. Inténtalo nuevamente.',
           });
           return of(null);
         }),

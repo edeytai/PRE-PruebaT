@@ -9,69 +9,72 @@
   min-height: 100vh;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4);
-  gap: var(--space-6);
+  padding: var(--space-6) var(--space-5);
+  gap: var(--space-8);
 
-  &__header {
+  &__main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__footer {
+    margin-top: var(--space-6);
+    color: var(--color-muted);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+.masthead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &__row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-4);
   }
 
   &__brand {
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  &__mark {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-2xl);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  &__meta {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: var(--space-3);
   }
 
-  &__logo {
-    font-size: 2rem;
-    line-height: 1;
-    filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));
-  }
-
-  &__title {
+  &__rule {
+    border: none;
+    border-top: 1px solid var(--color-ink);
     margin: 0;
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
 
-  &__subtitle {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
-  }
-
-  &__main {
-    flex: 1;
-    position: relative;
-    /* `overflow: hidden` evita scroll horizontal mientras la animación
-       de slide está en curso (los hermanos se posicionan absolute). */
-    overflow: hidden;
-  }
-
-  &__footer {
-    color: var(--color-text-muted);
-    text-align: center;
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-4);
+    &--top {
+      margin-bottom: var(--space-4);
+    }
   }
 }
 
 @media (min-width: 768px) {
   .app-shell {
-    padding: var(--space-6) var(--space-6);
-
-    &__title {
-      font-size: 2.25rem;
-    }
+    padding: var(--space-8) var(--space-8);
+    gap: var(--space-10);
   }
-}
 
-@media (min-width: 1024px) {
-  .app-shell {
-    gap: var(--space-8);
+  .masthead__mark {
+    font-size: var(--font-size-3xl);
   }
 }

@@ -1,12 +1,14 @@
 <div class="app-shell">
-  <header class="app-shell__header">
-    <div class="app-shell__brand">
-      <span class="app-shell__logo" aria-hidden="true">🏋️</span>
-      <div>
-        <h1 class="app-shell__title">Reservas de Gimnasio</h1>
-        <p class="app-shell__subtitle">Elegí tu próxima clase</p>
+  <header class="masthead">
+    <div class="masthead__row">
+      <a class="masthead__brand" routerLink="/">
+        <span class="masthead__mark serif">Atelier &mdash; Gym</span>
+      </a>
+      <div class="masthead__meta">
+        <span class="eyebrow">Reservas semanales</span>
       </div>
     </div>
+    <hr class="masthead__rule" />
   </header>
 
   <main class="app-shell__main" [@routeAnimations]="prepareRoute(outlet)">
@@ -14,6 +16,9 @@
   </main>
 
   <footer class="app-shell__footer">
-    <small>Prueba técnica · Angular 17 standalone · Sin librerías UI</small>
+    <hr class="masthead__rule masthead__rule--top" />
+    <small>
+      Atelier Gym &middot; Prueba tecnica Angular 17 &middot; Sin librerias UI
+    </small>
   </footer>
 </div>

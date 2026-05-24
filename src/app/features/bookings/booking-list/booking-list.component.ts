@@ -61,7 +61,7 @@ export class BookingListComponent implements OnInit {
           this.view.set({
             status: 'error',
             message:
-              'No pudimos cargar las reservas. Revisá tu conexión y volvé a intentarlo.',
+              'No pudimos cargar las reservas. Revisa tu conexión y vuelve a intentarlo.',
           });
           return of([] as Booking[]);
         }),
@@ -78,9 +78,16 @@ export class BookingListComponent implements OnInit {
     void this.router.navigate(['/bookings', booking.id]);
   }
 
-  /** Helper para `@for` — evita re-renders por identidad de objeto. */
-  protected trackById(_: number, booking: Booking): number {
-    return booking.id;
+  /**
+   * Porcentaje de ocupacion para la barra de capacidad.
+   * Sin un campo `capacity` real en el modelo, asumimos una capacidad
+   * teorica de 10 (el max del dataset) y calculamos el porcentaje
+   * ocupado en base a los cupos restantes.
+   */
+  protected occupancyPct(booking: Booking): number {
+    const total = 10;
+    const occupied = Math.max(0, total - booking.availableSpots);
+    return Math.min(100, Math.round((occupied / total) * 100));
   }
 
   /**
