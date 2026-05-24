@@ -1,0 +1,156 @@
+<section class="detail" aria-labelledby="detail-title">
+  <button type="button" class="detail__back" (click)="goBack()">
+    <span aria-hidden="true">←</span> Volver al listado
+  </button>
+
+  @switch (view().status) {
+    @case ('loading') {
+      <article class="panel panel--skeleton" aria-busy="true">
+        <div class="skeleton skeleton--title"></div>
+        <div class="skeleton skeleton--line"></div>
+        <div class="skeleton skeleton--line"></div>
+        <div class="skeleton skeleton--line skeleton--short"></div>
+        <div class="skeleton skeleton--btn"></div>
+      </article>
+    }
+
+    @case ('error') {
+      <div class="state state--error" role="alert">
+        <div class="state__icon" aria-hidden="true">⚠️</div>
+        <h2 class="state__title">No pudimos cargar la clase</h2>
+        <p class="state__message">{{ asError(view()).message }}</p>
+        <button type="button" class="btn btn--primary" (click)="goBack()">
+          Volver al listado
+        </button>
+      </div>
+    }
+
+    @case ('ready') {
+      @let booking = asReady(view()).booking;
+
+      <article class="panel">
+        <header class="panel__head">
+          <h2 id="detail-title" class="panel__title">{{ booking.className }}</h2>
+          @if (booking.intensity) {
+            <span class="badge badge--{{ booking.intensity }}">
+              Intensidad {{ booking.intensity }}
+            </span>
+          }
+        </header>
+
+        @if (booking.description) {
+          <p class="panel__description">{{ booking.description }}</p>
+        }
+
+        <dl class="panel__meta">
+          <div>
+            <dt>Profesor</dt>
+            <dd>{{ booking.instructor }}</dd>
+          </div>
+          <div>
+            <dt>Horario</dt>
+            <dd>{{ booking.schedule }}</dd>
+          </div>
+          @if (booking.durationMinutes) {
+            <div>
+              <dt>Duración</dt>
+              <dd>{{ booking.durationMinutes }} minutos</dd>
+            </div>
+          }
+          <div>
+            <dt>Cupos</dt>
+            <dd
+              [class.text-danger]="booking.availableSpots === 0"
+            >
+              @if (booking.availableSpots > 0) {
+                {{ booking.availableSpots }} disponibles
+              } @else {
+                Sin cupos
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <form
+          class="form"
+          [formGroup]="form"
+          (ngSubmit)="onSubmit()"
+          novalidate
+          aria-label="Formulario de reserva"
+        >
+          <div class="field">
+            <label for="attendeeName">Nombre del asistente</label>
+            <input
+              id="attendeeName"
+              type="text"
+              formControlName="attendeeName"
+              autocomplete="name"
+              placeholder="Ej. Camila Ruiz"
+            />
+            @if (
+              form.controls.attendeeName.touched && form.controls.attendeeName.invalid
+            ) {
+              <p class="field__error">
+                @if (form.controls.attendeeName.errors?.['required']) {
+                  El nombre es obligatorio.
+                } @else if (form.controls.attendeeName.errors?.['minlength']) {
+                  Debe tener al menos 3 caracteres.
+                }
+              </p>
+            }
+          </div>
+
+          <div class="field field--inline">
+            <label for="spots">Cantidad de cupos</label>
+            <input
+              id="spots"
+              type="number"
+              min="1"
+              [max]="booking.availableSpots || 1"
+              formControlName="spots"
+            />
+            @if (form.controls.spots.touched && form.controls.spots.invalid) {
+              <p class="field__error">
+                @if (form.controls.spots.errors?.['required']) {
+                  Indicá cuántos cupos querés reservar.
+                } @else if (form.controls.spots.errors?.['min']) {
+                  Mínimo 1 cupo.
+                } @else if (form.controls.spots.errors?.['max']) {
+                  Máximo {{ booking.availableSpots }} cupos disponibles.
+                }
+              </p>
+            }
+          </div>
+
+          <div class="form__actions">
+            <button
+              type="submit"
+              class="btn btn--primary"
+              [disabled]="!canSubmit()"
+            >
+              @if (submit().status === 'submitting') {
+                Reservando…
+              } @else {
+                Reservar
+              }
+            </button>
+          </div>
+
+          @switch (submit().status) {
+            @case ('success') {
+              <p class="feedback feedback--success" role="status">
+                ✅ Reserva confirmada. Quedan
+                {{ asSuccess(submit()).remainingSpots }} cupos.
+              </p>
+            }
+            @case ('failure') {
+              <p class="feedback feedback--error" role="alert">
+                {{ asFailure(submit()).message }}
+              </p>
+            }
+          }
+        </form>
+      </article>
+    }
+  }
+</section>

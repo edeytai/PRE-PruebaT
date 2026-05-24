@@ -5,9 +5,11 @@ import { BookingListComponent } from './features/bookings/booking-list/booking-l
 /**
  * Rutas de la aplicación.
  *
- * - `''` → listado de reservas (eager: es la pantalla principal).
+ * - `''`             → listado de reservas (eager: pantalla principal).
+ * - `'bookings/:id'` → detalle de reserva (lazy-loaded via loadComponent).
  *
- * El detalle se agrega en el siguiente commit usando lazy loading.
+ * El lazy loading del detalle saca esa pantalla del bundle inicial y
+ * cumple el "punto extra" de la consigna.
  */
 export const APP_ROUTES: Routes = [
   {
@@ -15,6 +17,14 @@ export const APP_ROUTES: Routes = [
     pathMatch: 'full',
     component: BookingListComponent,
     data: { animation: 'list' },
+  },
+  {
+    path: 'bookings/:id',
+    loadComponent: () =>
+      import('./features/bookings/booking-detail/booking-detail.component').then(
+        (m) => m.BookingDetailComponent,
+      ),
+    data: { animation: 'detail' },
   },
   { path: '**', redirectTo: '' },
 ];
