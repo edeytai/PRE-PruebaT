@@ -48,19 +48,26 @@ describe('BookingService', () => {
     req.flush(fixture[0]);
   });
 
-  it('debería postear una reserva al endpoint correcto', () => {
+  it('debería postear una reserva con la lista de asistentes', () => {
     service
-      .reserve({ bookingId: 1, attendeeName: 'Ana', spots: 2 })
-      .subscribe((res) => expect(res.remainingSpots).toBe(8));
+      .reserve({ bookingId: 1, attendees: ['Ana', 'Luis'] })
+      .subscribe((res) => {
+        expect(res.remainingSpots).toBe(8);
+        expect(res.reservedFor).toEqual(['Ana', 'Luis']);
+      });
 
     const req = httpMock.expectOne('/api/bookings/1/reservations');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
       bookingId: 1,
-      attendeeName: 'Ana',
-      spots: 2,
+      attendees: ['Ana', 'Luis'],
     });
-    req.flush({ ok: true, bookingId: 1, remainingSpots: 8 });
+    req.flush({
+      ok: true,
+      bookingId: 1,
+      reservedFor: ['Ana', 'Luis'],
+      remainingSpots: 8,
+    });
   });
 
   it('debería propagar errores HTTP', (done) => {

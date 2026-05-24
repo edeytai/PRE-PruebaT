@@ -19,17 +19,19 @@ export interface Booking {
 export type BookingIntensity = 'baja' | 'media' | 'alta';
 
 /**
- * Payload enviado al "reservar" un cupo.
- * No se persiste — la reserva es simulada según la consigna.
+ * Payload enviado al "reservar" cupos.
+ *
+ * Un cupo == un asistente: la cantidad de cupos se infiere del largo de
+ * `attendees`. No se persiste — la reserva es simulada según la consigna.
  */
 export interface ReservationRequest {
   bookingId: number;
-  attendeeName: string;
-  spots: number;
+  attendees: string[];
 }
 
 export interface ReservationResponse {
   ok: true;
   bookingId: number;
+  reservedFor: string[];
   remainingSpots: number;
 }

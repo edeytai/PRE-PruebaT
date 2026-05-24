@@ -1,6 +1,6 @@
 <section class="detail" aria-labelledby="detail-title">
   <button type="button" class="detail__back" (click)="goBack()">
-    <span aria-hidden="true">←</span> Volver al listado
+    <span aria-hidden="true">&larr;</span> Volver
   </button>
 
   @switch (view().status) {
@@ -16,7 +16,6 @@
 
     @case ('error') {
       <div class="state state--error" role="alert">
-        <div class="state__icon" aria-hidden="true">⚠️</div>
         <h2 class="state__title">No pudimos cargar la clase</h2>
         <p class="state__message">{{ asError(view()).message }}</p>
         <button type="button" class="btn btn--primary" (click)="goBack()">
@@ -29,6 +28,9 @@
       @if (booking(); as b) {
         <article class="panel">
           <header class="panel__head">
+            <span class="panel__eyebrow">
+              Clase nro. {{ b.id.toString().padStart(2, '0') }}
+            </span>
             <h2 id="detail-title" class="panel__title">{{ b.className }}</h2>
             @if (b.intensity) {
               <span class="badge badge--{{ b.intensity }}">
@@ -53,20 +55,31 @@
             @if (b.durationMinutes) {
               <div>
                 <dt>Duración</dt>
-                <dd>{{ b.durationMinutes }} minutos</dd>
+                <dd>{{ b.durationMinutes }} min</dd>
               </div>
             }
             <div>
-              <dt>Cupos</dt>
+              <dt>Disponibles</dt>
               <dd [class.text-danger]="b.availableSpots === 0">
-                @if (b.availableSpots > 0) {
-                  {{ b.availableSpots }} disponibles
-                } @else {
-                  Sin cupos
-                }
+                {{ b.availableSpots }} cupos
               </dd>
             </div>
           </dl>
+
+          <div class="capacity" aria-hidden="true">
+            <div
+              class="capacity__bar"
+              [style.--pct]="occupancyPct() + '%'"
+              role="progressbar"
+              [attr.aria-valuenow]="occupancyPct()"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-label="Ocupación de la clase"
+            ></div>
+            <span class="capacity__label">
+              {{ occupancyPct() }}% ocupado
+            </span>
+          </div>
 
           <form
             class="form"
@@ -75,59 +88,74 @@
             novalidate
             aria-label="Formulario de reserva"
           >
-            <div class="field">
-              <label for="attendeeName">Nombre del asistente</label>
-              <input
-                id="attendeeName"
-                type="text"
-                formControlName="attendeeName"
-                autocomplete="name"
-                placeholder="Ej. Camila Ruiz"
-              />
-              @if (
-                form.controls.attendeeName.touched &&
-                form.controls.attendeeName.invalid
-              ) {
-                <p class="field__error">
-                  @if (form.controls.attendeeName.errors?.['required']) {
-                    El nombre es obligatorio.
-                  } @else if (form.controls.attendeeName.errors?.['minlength']) {
-                    Debe tener al menos 3 caracteres.
+            <header class="form__head">
+              <h3 class="form__title">Reservar cupos</h3>
+              <p class="form__hint">
+                Cargá el nombre de cada asistente. Usá los botones para sumar o
+                quitar cupos.
+              </p>
+            </header>
+
+            <div class="attendees" formArrayName="attendees">
+              @for (ctrl of attendees.controls; track ctrl; let i = $index) {
+                <div class="attendee">
+                  <label class="attendee__label" [for]="'attendee-' + i">
+                    Asistente {{ (i + 1).toString().padStart(2, '0') }}
+                  </label>
+                  <input
+                    [id]="'attendee-' + i"
+                    type="text"
+                    [formControlName]="i"
+                    autocomplete="name"
+                    placeholder="Nombre y apellido"
+                  />
+                  <button
+                    type="button"
+                    class="attendee__remove"
+                    (click)="removeAttendee(i)"
+                    [disabled]="!canRemoveAttendee()"
+                    [attr.aria-label]="'Quitar asistente ' + (i + 1)"
+                  >
+                    &minus;
+                  </button>
+                  @if (
+                    asAttendeeControl(ctrl).touched &&
+                    asAttendeeControl(ctrl).invalid
+                  ) {
+                    <p class="attendee__error">
+                      @if (asAttendeeControl(ctrl).errors?.['required']) {
+                        Falta el nombre.
+                      } @else if (asAttendeeControl(ctrl).errors?.['minlength']) {
+                        Mínimo 3 caracteres.
+                      }
+                    </p>
                   }
-                </p>
+                </div>
               }
             </div>
 
-            <div class="field field--inline">
-              <label for="spots">Cantidad de cupos</label>
-              <input
-                id="spots"
-                type="number"
-                min="1"
-                [max]="b.availableSpots || 1"
-                formControlName="spots"
-              />
-              @if (form.controls.spots.touched && form.controls.spots.invalid) {
-                <p class="field__error">
-                  @if (form.controls.spots.errors?.['required']) {
-                    Indicá cuántos cupos querés reservar.
-                  } @else if (form.controls.spots.errors?.['min']) {
-                    Mínimo 1 cupo.
-                  } @else if (form.controls.spots.errors?.['max']) {
-                    Máximo {{ b.availableSpots }} cupos disponibles.
-                  }
-                </p>
-              }
+            <div class="attendees__actions">
+              <button
+                type="button"
+                class="btn btn--ghost"
+                (click)="addAttendee()"
+                [disabled]="!canAddAttendee()"
+              >
+                + Sumar cupo
+              </button>
+              <span class="attendees__count">
+                {{ requestedSpots() }} de {{ b.availableSpots }} disponibles
+              </span>
             </div>
 
             <div class="form__actions">
               <button
                 type="submit"
-                class="btn btn--primary"
+                class="btn btn--primary btn--lg"
                 [disabled]="!canSubmit()"
               >
                 @if (submit().status === 'submitting') {
-                  Reservando…
+                  Reservando&hellip;
                 } @else {
                   Reservar
                 }
@@ -137,7 +165,8 @@
             @switch (submit().status) {
               @case ('success') {
                 <p class="feedback feedback--success" role="status">
-                  ✅ Reserva confirmada. Quedan
+                  Reserva confirmada para
+                  {{ asSuccess(submit()).reservedFor.join(', ') }}. Quedan
                   {{ asSuccess(submit()).remainingSpots }} cupos.
                 </p>
               }

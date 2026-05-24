@@ -86,15 +86,26 @@ export function bookingsMockInterceptor(
       if (reserveMatch && req.method === 'POST') {
         const id = Number(reserveMatch[1]);
         const booking = bookings.find((b) => b.id === id);
-        const body = req.body as { spots?: number } | null;
-        const spots = Math.max(1, Math.trunc(body?.spots ?? 1));
+        const body = req.body as { attendees?: string[] } | null;
+        const attendees = (body?.attendees ?? [])
+          .map((n) => n.trim())
+          .filter((n) => n.length > 0);
 
         if (!booking) {
           return throwError(
             () => new HttpErrorResponse({ status: 404, statusText: 'Not Found' }),
           );
         }
-        if (booking.availableSpots < spots) {
+        if (attendees.length === 0) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 400,
+                statusText: 'Hace falta al menos un asistente',
+              }),
+          );
+        }
+        if (booking.availableSpots < attendees.length) {
           return throwError(
             () =>
               new HttpErrorResponse({
@@ -104,10 +115,11 @@ export function bookingsMockInterceptor(
           );
         }
 
-        booking.availableSpots -= spots;
+        booking.availableSpots -= attendees.length;
         const response: ReservationResponse = {
           ok: true,
           bookingId: booking.id,
+          reservedFor: attendees,
           remainingSpots: booking.availableSpots,
         };
         return of(new HttpResponse({ status: 201, body: response }));
