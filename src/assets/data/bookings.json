@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "className": "Yoga Vinyasa",
+    "instructor": "Laura Gómez",
+    "schedule": "Lunes 18:00",
+    "availableSpots": 10,
+    "description": "Flujo dinámico de posturas sincronizado con la respiración. Apto para todos los niveles.",
+    "durationMinutes": 60,
+    "intensity": "media"
+  },
+  {
+    "id": 2,
+    "className": "CrossFit WOD",
+    "instructor": "Martín Pereyra",
+    "schedule": "Martes 19:30",
+    "availableSpots": 6,
+    "description": "Workout of the day de alta intensidad combinando fuerza y cardio.",
+    "durationMinutes": 50,
+    "intensity": "alta"
+  },
+  {
+    "id": 3,
+    "className": "Spinning Endurance",
+    "instructor": "Carolina Suárez",
+    "schedule": "Miércoles 07:00",
+    "availableSpots": 12,
+    "description": "Resistencia aeróbica en bici indoor con coaching y métricas de cadencia.",
+    "durationMinutes": 45,
+    "intensity": "media"
+  },
+  {
+    "id": 4,
+    "className": "Funcional Express",
+    "instructor": "Diego Salinas",
+    "schedule": "Jueves 12:30",
+    "availableSpots": 0,
+    "description": "Circuito funcional de 30 minutos pensado para horario de oficina.",
+    "durationMinutes": 30,
+    "intensity": "alta"
+  },
+  {
+    "id": 5,
+    "className": "Pilates Reformer",
+    "instructor": "Sofía Albornoz",
+    "schedule": "Viernes 10:00",
+    "availableSpots": 4,
+    "description": "Sesión guiada en reformer enfocada en control postural y core.",
+    "durationMinutes": 55,
+    "intensity": "baja"
+  },
+  {
+    "id": 6,
+    "className": "Box Cardio",
+    "instructor": "Renzo Vidal",
+    "schedule": "Sábado 11:00",
+    "availableSpots": 8,
+    "description": "Boxeo recreativo + intervalos de cardio. Vendas recomendadas.",
+    "durationMinutes": 60,
+    "intensity": "alta"
+  }
+]
