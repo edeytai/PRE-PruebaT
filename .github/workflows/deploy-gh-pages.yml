@@ -40,6 +40,11 @@ jobs:
         run: npm run build -- --base-href=/${{ github.event.repository.name }}/
 
       - uses: actions/configure-pages@v5
+        # `enablement: true` habilita Pages automaticamente en el primer
+        # run si todavia no esta activado en Settings -> Pages. Requiere
+        # los permisos pages: write e id-token: write declarados arriba.
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
