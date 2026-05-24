@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+  gap: var(--space-6);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  &__logo {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  &__main {
+    flex: 1;
+    position: relative;
+  }
+
+  &__footer {
+    color: var(--color-text-muted);
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-4);
+  }
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    padding: var(--space-6) var(--space-6);
+  }
+}
