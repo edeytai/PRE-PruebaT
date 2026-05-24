@@ -26,131 +26,130 @@
     }
 
     @case ('ready') {
-      @let booking = asReady(view()).booking;
+      @if (booking(); as b) {
+        <article class="panel">
+          <header class="panel__head">
+            <h2 id="detail-title" class="panel__title">{{ b.className }}</h2>
+            @if (b.intensity) {
+              <span class="badge badge--{{ b.intensity }}">
+                Intensidad {{ b.intensity }}
+              </span>
+            }
+          </header>
 
-      <article class="panel">
-        <header class="panel__head">
-          <h2 id="detail-title" class="panel__title">{{ booking.className }}</h2>
-          @if (booking.intensity) {
-            <span class="badge badge--{{ booking.intensity }}">
-              Intensidad {{ booking.intensity }}
-            </span>
+          @if (b.description) {
+            <p class="panel__description">{{ b.description }}</p>
           }
-        </header>
 
-        @if (booking.description) {
-          <p class="panel__description">{{ booking.description }}</p>
-        }
-
-        <dl class="panel__meta">
-          <div>
-            <dt>Profesor</dt>
-            <dd>{{ booking.instructor }}</dd>
-          </div>
-          <div>
-            <dt>Horario</dt>
-            <dd>{{ booking.schedule }}</dd>
-          </div>
-          @if (booking.durationMinutes) {
+          <dl class="panel__meta">
             <div>
-              <dt>Duración</dt>
-              <dd>{{ booking.durationMinutes }} minutos</dd>
+              <dt>Profesor</dt>
+              <dd>{{ b.instructor }}</dd>
             </div>
-          }
-          <div>
-            <dt>Cupos</dt>
-            <dd
-              [class.text-danger]="booking.availableSpots === 0"
-            >
-              @if (booking.availableSpots > 0) {
-                {{ booking.availableSpots }} disponibles
-              } @else {
-                Sin cupos
-              }
-            </dd>
-          </div>
-        </dl>
-
-        <form
-          class="form"
-          [formGroup]="form"
-          (ngSubmit)="onSubmit()"
-          novalidate
-          aria-label="Formulario de reserva"
-        >
-          <div class="field">
-            <label for="attendeeName">Nombre del asistente</label>
-            <input
-              id="attendeeName"
-              type="text"
-              formControlName="attendeeName"
-              autocomplete="name"
-              placeholder="Ej. Camila Ruiz"
-            />
-            @if (
-              form.controls.attendeeName.touched && form.controls.attendeeName.invalid
-            ) {
-              <p class="field__error">
-                @if (form.controls.attendeeName.errors?.['required']) {
-                  El nombre es obligatorio.
-                } @else if (form.controls.attendeeName.errors?.['minlength']) {
-                  Debe tener al menos 3 caracteres.
+            <div>
+              <dt>Horario</dt>
+              <dd>{{ b.schedule }}</dd>
+            </div>
+            @if (b.durationMinutes) {
+              <div>
+                <dt>Duración</dt>
+                <dd>{{ b.durationMinutes }} minutos</dd>
+              </div>
+            }
+            <div>
+              <dt>Cupos</dt>
+              <dd [class.text-danger]="b.availableSpots === 0">
+                @if (b.availableSpots > 0) {
+                  {{ b.availableSpots }} disponibles
+                } @else {
+                  Sin cupos
                 }
-              </p>
-            }
-          </div>
+              </dd>
+            </div>
+          </dl>
 
-          <div class="field field--inline">
-            <label for="spots">Cantidad de cupos</label>
-            <input
-              id="spots"
-              type="number"
-              min="1"
-              [max]="booking.availableSpots || 1"
-              formControlName="spots"
-            />
-            @if (form.controls.spots.touched && form.controls.spots.invalid) {
-              <p class="field__error">
-                @if (form.controls.spots.errors?.['required']) {
-                  Indicá cuántos cupos querés reservar.
-                } @else if (form.controls.spots.errors?.['min']) {
-                  Mínimo 1 cupo.
-                } @else if (form.controls.spots.errors?.['max']) {
-                  Máximo {{ booking.availableSpots }} cupos disponibles.
-                }
-              </p>
-            }
-          </div>
-
-          <div class="form__actions">
-            <button
-              type="submit"
-              class="btn btn--primary"
-              [disabled]="!canSubmit()"
-            >
-              @if (submit().status === 'submitting') {
-                Reservando…
-              } @else {
-                Reservar
+          <form
+            class="form"
+            [formGroup]="form"
+            (ngSubmit)="onSubmit()"
+            novalidate
+            aria-label="Formulario de reserva"
+          >
+            <div class="field">
+              <label for="attendeeName">Nombre del asistente</label>
+              <input
+                id="attendeeName"
+                type="text"
+                formControlName="attendeeName"
+                autocomplete="name"
+                placeholder="Ej. Camila Ruiz"
+              />
+              @if (
+                form.controls.attendeeName.touched &&
+                form.controls.attendeeName.invalid
+              ) {
+                <p class="field__error">
+                  @if (form.controls.attendeeName.errors?.['required']) {
+                    El nombre es obligatorio.
+                  } @else if (form.controls.attendeeName.errors?.['minlength']) {
+                    Debe tener al menos 3 caracteres.
+                  }
+                </p>
               }
-            </button>
-          </div>
+            </div>
 
-          @switch (submit().status) {
-            @case ('success') {
-              <p class="feedback feedback--success" role="status">
-                ✅ Reserva confirmada. Quedan
-                {{ asSuccess(submit()).remainingSpots }} cupos.
-              </p>
+            <div class="field field--inline">
+              <label for="spots">Cantidad de cupos</label>
+              <input
+                id="spots"
+                type="number"
+                min="1"
+                [max]="b.availableSpots || 1"
+                formControlName="spots"
+              />
+              @if (form.controls.spots.touched && form.controls.spots.invalid) {
+                <p class="field__error">
+                  @if (form.controls.spots.errors?.['required']) {
+                    Indicá cuántos cupos querés reservar.
+                  } @else if (form.controls.spots.errors?.['min']) {
+                    Mínimo 1 cupo.
+                  } @else if (form.controls.spots.errors?.['max']) {
+                    Máximo {{ b.availableSpots }} cupos disponibles.
+                  }
+                </p>
+              }
+            </div>
+
+            <div class="form__actions">
+              <button
+                type="submit"
+                class="btn btn--primary"
+                [disabled]="!canSubmit()"
+              >
+                @if (submit().status === 'submitting') {
+                  Reservando…
+                } @else {
+                  Reservar
+                }
+              </button>
+            </div>
+
+            @switch (submit().status) {
+              @case ('success') {
+                <p class="feedback feedback--success" role="status">
+                  ✅ Reserva confirmada. Quedan
+                  {{ asSuccess(submit()).remainingSpots }} cupos.
+                </p>
+              }
+              @case ('failure') {
+                <p class="feedback feedback--error" role="alert">
+                  {{ asFailure(submit()).message }}
+                </p>
+              }
             }
-            @case ('failure') {
-              <p class="feedback feedback--error" role="alert">
-                {{ asFailure(submit()).message }}
-              </p>
-            }
-          }
-        </form>
-      </article>
+          </form>
+        </article>
+      }
     }
   }
 </section>

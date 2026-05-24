@@ -80,6 +80,16 @@ export class BookingDetailComponent implements OnInit {
     );
   });
 
+  /**
+   * Helper computed: expone la reserva cargada como Signal (o null).
+   * Evita repetir `asReady(view()).booking` en la plantilla y resulta
+   * más legible que un `@let` (que recién está disponible en Angular 18).
+   */
+  protected readonly booking: Signal<Booking | null> = computed(() => {
+    const v = this.view();
+    return v.status === 'ready' ? v.booking : null;
+  });
+
   ngOnInit(): void {
     const numericId = Number(this.id);
     if (!Number.isFinite(numericId) || numericId <= 0) {
