@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirigiendo…</title>
+    <!--
+      Fallback de GitHub Pages para SPAs: cuando el usuario aterriza en
+      una ruta interna (p.ej. /bookings/3), Pages sirve este archivo.
+      Aquí redirigimos a la raíz preservando el path para que el Router
+      de Angular tome el control.
+    -->
+    <script>
+      (function () {
+        var path = window.location.pathname + window.location.search + window.location.hash;
+        var base = window.location.origin + '/';
+        window.location.replace(base + '#redirect=' + encodeURIComponent(path));
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

@@ -1,0 +1,13 @@
+# Netlify deploy config para Angular 17 (application builder).
+# La salida del build queda en dist/gym-bookings/browser.
+
+[build]
+  command = "npm run build -- --base-href=/"
+  publish = "dist/gym-bookings/browser"
+
+# SPA fallback: cualquier ruta no-archivo cae en index.html para que
+# el Router de Angular pueda manejarla en el cliente.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
