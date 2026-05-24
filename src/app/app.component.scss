@@ -60,5 +60,15 @@
 @media (min-width: 768px) {
   .app-shell {
     padding: var(--space-6) var(--space-6);
+
+    &__title {
+      font-size: 2.25rem;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-shell {
+    gap: var(--space-8);
   }
 }

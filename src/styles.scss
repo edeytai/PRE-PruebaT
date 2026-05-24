@@ -88,3 +88,25 @@ a {
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
+
+/*
+ * Respeto a la preferencia del usuario: si declara reduced-motion,
+ * desactivamos animaciones, transiciones y el shimmer de los skeletons.
+ * Es un requisito de accesibilidad (WCAG 2.3.3) habitualmente olvidado.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Selección de texto consistente con la marca */
+::selection {
+  background: rgba(245, 158, 11, 0.35);
+  color: #fff;
+}
