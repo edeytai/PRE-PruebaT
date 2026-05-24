@@ -47,6 +47,9 @@
   &__main {
     flex: 1;
     position: relative;
+    /* `overflow: hidden` evita scroll horizontal mientras la animación
+       de slide está en curso (los hermanos se posicionan absolute). */
+    overflow: hidden;
   }
 
   &__footer {

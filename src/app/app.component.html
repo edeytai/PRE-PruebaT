@@ -9,8 +9,8 @@
     </div>
   </header>
 
-  <main class="app-shell__main">
-    <router-outlet />
+  <main class="app-shell__main" [@routeAnimations]="prepareRoute(outlet)">
+    <router-outlet #outlet="outlet" />
   </main>
 
   <footer class="app-shell__footer">
