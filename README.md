@@ -2,7 +2,7 @@
 
 Aplicación SPA en **Angular 17 (standalone)** que implementa la vista de un sistema de reservas de turnos para un gimnasio. Cumple los requisitos obligatorios de la consigna y todos los puntos extra propuestos.
 
-> **Repositorio:** privado en GitHub. La consigna original pide repositorio público; cambialo a público desde **Settings → Danger Zone → Change visibility** cuando vayas a entregarlo.
+> **Repositorio:** público en GitHub. Deploy automatico en [GitHub Pages](https://edeytai.github.io/PRE-PruebaT/) via Actions en cada push a `main`.
 
 ---
 
