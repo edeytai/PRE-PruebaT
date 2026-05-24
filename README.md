@@ -26,7 +26,7 @@ Aplicación SPA en **Angular 17 (standalone)** que implementa la vista de un sis
 
 - [x] **Standalone components** + **control flow** (`@if`, `@for`, `@switch`).
 - [x] **Signals** para estado reactivo (`signal`, `computed`, `Signal<T>`).
-- [x] **Reactive Forms** en el detalle (FormGroup tipado con validaciones).
+- [x] **Reactive Forms** en el detalle (`FormArray` tipado de asistentes con add/remove dinámico).
 - [x] **Tests unitarios** (Jasmine + Karma) para servicio, estado y componente clave.
 - [x] **Lazy loading** del detalle (`loadComponent`).
 - [x] **Animaciones** suaves entre listado y detalle (`@angular/animations`).
@@ -145,11 +145,13 @@ Se implementó un **HTTP Interceptor funcional** (`bookingsMockInterceptor`) reg
 
 ### Endpoints que reconoce
 
-| Método | Ruta                             | Respuesta                                       |
-| ------ | -------------------------------- | ----------------------------------------------- |
-| GET    | `/api/bookings`                  | `Booking[]` (200)                               |
-| GET    | `/api/bookings/:id`              | `Booking` (200) o 404                           |
-| POST   | `/api/bookings/:id/reservations` | `ReservationResponse` (201) o 409 si falta cupo |
+| Método | Ruta                             | Respuesta                                                                        |
+| ------ | -------------------------------- | -------------------------------------------------------------------------------- |
+| GET    | `/api/bookings`                  | `Booking[]` (200)                                                                |
+| GET    | `/api/bookings/:id`              | `Booking` (200) o 404                                                            |
+| POST   | `/api/bookings/:id/reservations` | `ReservationResponse` (201). 400 si no hay asistentes; 409 si exceden los cupos. |
+
+El body de la reserva es `{ bookingId, attendees: string[] }` — la cantidad de cupos se infiere del largo del array. La respuesta devuelve `reservedFor` con los nombres confirmados y `remainingSpots` con los cupos restantes.
 
 ### Características
 
@@ -169,12 +171,15 @@ Porque permite que el `BookingService` use `HttpClient` con rutas REST convencio
 
 ## Diseño y UX
 
-- **Paleta**: slate + acento ámbar (definida en CSS variables en `styles.scss`).
-- **Tipografía**: Inter (vía Google Fonts).
-- **Spacing scale** de 4px con tokens nombrados.
+- **Identidad editorial** ("Atelier — Gym"): paleta bone cálido + tinta + acento terracota, en lugar del clásico dashboard oscuro. Todas las decisiones se resuelven con HTML + SCSS puros, sin librerías UI.
+- **Tipografía**: Fraunces (serif variable) para titulares y descripción, Inter para body, `ui-monospace` para datos tabulares (cupos, contadores). Cargadas vía Google Fonts.
+- **Tokens** en `styles.scss`: paleta, escala tipográfica, spacing de 4 px, radii mínimos y sombras hairline.
+- **Listado** como filas numeradas (01, 02, 03) separadas por reglas finas — más cerca de una cartelera que de un grid genérico de cards. Cada fila incluye una **barra de capacidad** con el porcentaje de ocupación.
+- **Detalle** con panel "paper" y tabla de metadata con divisores; el formulario usa inputs underline (sin caja) y un campo por asistente (uno por cupo).
+- **Reservar**: el form pide un nombre por cupo mediante un `FormArray`. Botones `+ Sumar cupo` / `−` por fila ajustan dinámicamente la cantidad, con validación por asistente (`required`, `minLength`).
 - **Estados visuales**:
-  - Loading: skeleton screens animados (no spinner).
-  - Error: banner con icono y botón de reintentar.
+  - Loading: skeleton screens (no spinner).
+  - Error: bloque con eyebrow, título serif y botón de reintentar.
   - Empty: mensaje contextual.
 - **Animaciones**: slide horizontal + fade entre listado y detalle (`@angular/animations`).
 - **Accesibilidad**:
