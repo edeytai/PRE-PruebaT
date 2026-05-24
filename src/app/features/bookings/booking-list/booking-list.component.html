@@ -1,0 +1,90 @@
+<section class="list" aria-labelledby="list-title">
+  <header class="list__header">
+    <h2 id="list-title" class="list__title">Reservas disponibles</h2>
+    <p class="list__hint">Tocá una tarjeta para ver el detalle y reservar.</p>
+  </header>
+
+  @switch (view().status) {
+    @case ('loading') {
+      <div class="list__grid" aria-busy="true" aria-live="polite">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="card card--skeleton" aria-hidden="true">
+            <div class="skeleton skeleton--title"></div>
+            <div class="skeleton skeleton--line"></div>
+            <div class="skeleton skeleton--line skeleton--short"></div>
+            <div class="skeleton skeleton--btn"></div>
+          </div>
+        }
+      </div>
+      <p class="visually-hidden">Cargando reservas…</p>
+    }
+
+    @case ('error') {
+      <div class="state state--error" role="alert">
+        <div class="state__icon" aria-hidden="true">⚠️</div>
+        <h3 class="state__title">Algo salió mal</h3>
+        <p class="state__message">{{ asError(view()).message }}</p>
+        <button type="button" class="btn btn--primary" (click)="load()">
+          Reintentar
+        </button>
+      </div>
+    }
+
+    @case ('success') {
+      @if (isEmpty()) {
+        <div class="state state--empty">
+          <div class="state__icon" aria-hidden="true">🗓️</div>
+          <h3 class="state__title">No hay clases disponibles</h3>
+          <p class="state__message">
+            Por el momento no hay turnos publicados. Volvé a intentarlo más tarde.
+          </p>
+        </div>
+      } @else {
+        <ul class="list__grid" role="list">
+          @for (booking of asSuccess(view()).bookings; track trackById($index, booking)) {
+            <li class="card" [class.card--full]="booking.availableSpots === 0">
+              <div class="card__head">
+                <h3 class="card__title">{{ booking.className }}</h3>
+                @if (booking.intensity) {
+                  <span class="badge badge--{{ booking.intensity }}">
+                    {{ booking.intensity }}
+                  </span>
+                }
+              </div>
+
+              <dl class="card__meta">
+                <div>
+                  <dt>Profesor</dt>
+                  <dd>{{ booking.instructor }}</dd>
+                </div>
+                <div>
+                  <dt>Horario</dt>
+                  <dd>{{ booking.schedule }}</dd>
+                </div>
+                <div>
+                  <dt>Cupos</dt>
+                  <dd>
+                    @if (booking.availableSpots > 0) {
+                      {{ booking.availableSpots }} disponibles
+                    } @else {
+                      <span class="text-danger">Sin cupos</span>
+                    }
+                  </dd>
+                </div>
+              </dl>
+
+              <button
+                type="button"
+                class="btn btn--ghost card__cta"
+                (click)="open(booking)"
+              >
+                Ver más
+                <span aria-hidden="true">→</span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+</section>
